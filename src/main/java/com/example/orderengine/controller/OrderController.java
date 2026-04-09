@@ -24,6 +24,9 @@ public class OrderController {
     @PostMapping
     public ResponseEntity<?> createOrder(@RequestBody OrderRequestDTO requestDTO) {
         System.out.println("Received create order API call");
+        System.out.println("User: " + requestDTO.getUserId());
+        int itemCount = (requestDTO.getItems() != null) ? requestDTO.getItems().size() : 0;
+        System.out.println("Items count: " + itemCount);
         try {
             Order order = orderService.placeOrder(requestDTO);
             return new ResponseEntity<>(order, HttpStatus.CREATED);

@@ -7,6 +7,15 @@ public class OrderRequestDTO {
     private String idempotencyKey;
     private List<OrderItemRequest> items;
 
+    public OrderRequestDTO() {
+    }
+
+    public OrderRequestDTO(Long userId, String idempotencyKey, List<OrderItemRequest> items) {
+        this.userId = userId;
+        this.idempotencyKey = idempotencyKey;
+        this.items = items;
+    }
+
     public Long getUserId() {
         return userId;
     }

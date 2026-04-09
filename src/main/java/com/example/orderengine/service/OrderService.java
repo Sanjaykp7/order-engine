@@ -36,6 +36,11 @@ public class OrderService {
         
         System.out.println("Order started: " + request.getIdempotencyKey());
 
+        if (request.getItems() == null || request.getItems().isEmpty()) {
+            throw new RuntimeException("Order must contain at least one item");
+        }
+
+
         // 1. Idempotency Check: Standard find
         Optional<Order> existingOrder = orderRepository.findByIdempotencyKey(request.getIdempotencyKey());
         if (existingOrder.isPresent()) {
@@ -65,6 +70,10 @@ public class OrderService {
             // 3. Process Inventory
             for (OrderItemRequest itemReq : request.getItems()) {
                 
+                if (itemReq.getQuantity() <= 0) {
+                    throw new RuntimeException("Invalid quantity");
+                }
+
                 // PESSIMISTIC_WRITE lock on inventory
                 // Query uses i.productId because our entity maps the direct ID purely, preventing Hibernate proxy load issues
                 Inventory inventory = inventoryRepository.findByProductIdForUpdate(itemReq.getProductId());
