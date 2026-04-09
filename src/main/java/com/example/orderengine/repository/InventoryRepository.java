@@ -12,11 +12,9 @@ import jakarta.persistence.LockModeType;
 @Repository
 public interface InventoryRepository extends JpaRepository<Inventory, Long> {
 
-    // Pessimistic write lock to prevent concurrency issues
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT i FROM Inventory i WHERE i.productId = :productId")
     Inventory findByProductIdForUpdate(@Param("productId") Long productId);
 
-    // Standard read for display purposes
     Inventory findByProductId(Long productId);
 }
