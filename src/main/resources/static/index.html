@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction-Safe Order Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>Order Engine Dashboard</h1>
+            <p>Seamless, Transaction-Safe Checkout</p>
+        </header>
+        
+        <main>
+            <section class="products-section">
+                <h2>Available Products</h2>
+                <div id="products-container" class="products-grid">
+                    <!-- Products injected via JS -->
+                    <div class="loader">Loading secure inventory...</div>
+                </div>
+            </section>
+
+            <section class="checkout-section">
+                <h2>Checkout Simulation</h2>
+                <div class="checkout-card">
+                    <div class="form-group">
+                        <label for="product-select">Select Product</label>
+                        <select id="product-select">
+                            <!-- Options injected via JS -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="quantity-input">Quantity</label>
+                        <input type="number" id="quantity-input" min="1" value="1">
+                    </div>
+
+                    <button id="checkout-btn" class="primary-btn">Process Order Tranasction</button>
+                    
+                    <div id="status-message" class="status-message hidden"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
