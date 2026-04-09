@@ -40,14 +40,11 @@ public class OrderService {
             throw new RuntimeException("Order must contain at least one item");
         }
 
-
-        // 1. Idempotency Check: Standard find
         Optional<Order> existingOrder = orderRepository.findByIdempotencyKey(request.getIdempotencyKey());
         if (existingOrder.isPresent()) {
             return existingOrder.get();
         }
-
-        // 2. Create Order safely with Race-Condition fallback
+        
         Order order = new Order();
         order.setUserId(request.getUserId());
         order.setIdempotencyKey(request.getIdempotencyKey());
@@ -57,25 +54,19 @@ public class OrderService {
         try {
             order = orderRepository.save(order);
         } catch (org.springframework.dao.DataIntegrityViolationException dive) {
-            // Edge Case Handling: Two users fired same payload exactly instantly, dodging the standard check!
-            // Unique constraint on DB rejects one, we elegantly fall back to just returning the winner.
             return orderRepository.findByIdempotencyKey(request.getIdempotencyKey()).get();
         }
 
         try {
-            // Order status flow: 2. PROCESSING
             order.setStatus(OrderStatus.PROCESSING);
             order = orderRepository.save(order);
 
-            // 3. Process Inventory
             for (OrderItemRequest itemReq : request.getItems()) {
                 
                 if (itemReq.getQuantity() <= 0) {
                     throw new RuntimeException("Invalid quantity");
                 }
 
-                // PESSIMISTIC_WRITE lock on inventory
-                // Query uses i.productId because our entity maps the direct ID purely, preventing Hibernate proxy load issues
                 Inventory inventory = inventoryRepository.findByProductIdForUpdate(itemReq.getProductId());
                 
                 if (inventory == null) {
@@ -96,7 +87,6 @@ public class OrderService {
                 orderItemRepository.save(orderItem);
             }
 
-            // 4. Simulate Payment
             if (!simulatePayment()) {
                 throw new RuntimeException("Payment failed, rolling back order");
             }
@@ -107,7 +97,6 @@ public class OrderService {
 
         } catch (Exception e) {
             System.out.println("Order failed: " + e.getMessage());
-            // Intentionally letting the Exception ride out to trigger Spring rollback native logic without manually writing FAILED
             throw e;
         }
     }
