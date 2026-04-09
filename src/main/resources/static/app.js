@@ -23,7 +23,6 @@ async function fetchProducts() {
         }
 
         products.forEach(product => {
-            // Build UI Card
             const stockClass = product.stock < 5 ? 'low-stock' : '';
             const productHtml = `
                 <div class="product-item">
@@ -37,8 +36,7 @@ async function fetchProducts() {
                 </div>
             `;
             productsContainer.insertAdjacentHTML('beforeend', productHtml);
-            
-            // Build Dropdown Select
+
             const option = document.createElement('option');
             option.value = product.productId;
             option.textContent = `${product.name} - $${product.price.toFixed(2)}`;
@@ -58,11 +56,10 @@ async function processOrder() {
     const productId = document.getElementById('product-select').value;
     const quantity = document.getElementById('quantity-input').value;
     
-    // Generate a unique idempotency key locally for this specific browser action
     const idempotencyKey = 'req-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
     
     const orderPayload = {
-        userId: 1, // Hardcoded for demo logic
+        userId: 1, 
         idempotencyKey: idempotencyKey,
         items: [
             {
@@ -72,7 +69,6 @@ async function processOrder() {
         ]
     };
 
-    // UI Loading state
     btn.disabled = true;
     btn.textContent = 'Processing Transaction...';
     statusBox.className = 'status-message hidden';
@@ -98,10 +94,9 @@ async function processOrder() {
         showStatus('Network error during transaction.', 'status-error');
         console.error(error);
     } finally {
-        // Reset UI and refresh stock counts
         btn.disabled = false;
         btn.textContent = 'Process Order Transaction';
-        fetchProducts(); // Auto-refresh inventory!
+        fetchProducts(); 
     }
 }
 
