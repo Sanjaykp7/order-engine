@@ -32,7 +32,6 @@ public class OrderController {
             return new ResponseEntity<>(order, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             System.out.println("Error occurred during order processing: " + e.getMessage());
-            // Transaction has rolled back due to the exception.
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
