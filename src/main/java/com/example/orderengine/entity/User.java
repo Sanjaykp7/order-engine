@@ -16,7 +16,6 @@ public class User {
 
     private String name;
 
-    // Constructors
     public User() {
     }
 
@@ -24,7 +23,6 @@ public class User {
         this.name = name;
     }
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }
